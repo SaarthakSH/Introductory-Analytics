@@ -1,0 +1,702 @@
+---
+title: ""
+output: html_document
+---
+
+```{r libraries, message=FALSE, warning=FALSE}
+
+# List of libraries that are used in this data set 
+library(readxl)
+library(knitr)
+library(dplyr)
+library(kableExtra)
+library(RColorBrewer)
+library(tidyverse)
+
+# Location of the data set that is used 
+P6Data <- read_excel("DataSets/Project6Data.xlsx")
+
+```
+
+<P>
+
+<P><BR>
+<FONT SIZE=4, COLOR="#75A91B">
+<B>INTRODUCTION</B>
+</FONT>
+
+<P>
+
+<B><FONT SIZE = 3, COLOR = "#0E5802">
+Sales analysis in the industry </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#583302">
+Sales analysis is the process of analyzing your sales force against its goals using data. It is used to provide information on the best and worst-performing products, as well as the market difficulties they face, sales forecasts, and sales revenue. <BR>
+Similarly, we may utilize sales analysis in the data set to discover insights about overall profit, loss, net sales, sales total, and so on, and then use those insights to portray them on visually appealing dashboards. We may also uncover trends in this data collection that will aid us in further optimizing the sales process.
+<P> </FONT>
+<B><FONT SIZE = 3, COLOR = "#0E5802">
+Use of Big data analytics in the sales industry </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#583302">
+1) <B>Identifying fresh leads</B> - One of the most significant outcomes of big data analysis is the ability to acquire vital insights into how people feel about your product or service. You may integrate big data with social data to assist you uncover any impediments to growing total sales by identifying the frequently purchased services or goods. This can help you tap into new markets, gain access to a larger target audience, and generate new lead for your company. (Silva E, 2018) For example, we may utilize our data set to determine overall sales by department, then focus on certain areas that are very profitable and generate suggestions based on that information.<BR>
+2) <B>Providing Guidance in increasing conversation rates</B> - big data findings have been shown to assist firms contact new clients, raise revenue, and increase conversion rates, according to intelligent marketing experts. Big data is a fascinating new field for marketers since the insights it provides are unparalleled. It aids marketers in pricing optimization, planning, and consumer engagement strategy development. Big data has also demonstrated enormous promise in gaining conversions, which is the most crucial marketing goal. (Silva E, 2018) For example, we may look at the discount data set and offer recommendations, such as that particular goods' sales increased significantly when a specific discount level was reached, and so on.<BR>
+3) <B>Future revenue forecasting</B> - A growing number of small, medium, and large enterprises throughout the world are utilizing big data. Big data analytics is being used by companies like Walmart to improve and enhance sales. Businesses may now develop social genomes, which are collections of data recorded in ever more complicated and increasing databases, by converting big data into meaningful analyses. These databases give organizations with information about client purchasing patterns, behaviors, preferences, and dislikes, among other things. With this insight, you'll be able to recommend the appropriate product to the right consumer at the right moment, resulting in more conversions and sales. (Silva E, 2018) For example, we may analyze net profit statistics based on a certain market and estimate future market demands based on client buying patterns.
+<P> </FONT>
+<B><FONT SIZE = 3, COLOR = "#0E5802">
+Description of the provided dataset </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#583302">
+The report describes a company's office supply sales in five key global markets: Asia Pacific, LATAM, USCA, Africa, and Europe. Price, Quantity, Discount, Shipping Cost, Total Sales, Net Sales, Returns, Profit & Loss, and Total Sales, Net Sales, Returns, Profit & Loss are some of the numerical values in this data collection that offer information on all market product parameters. Aside from that, these markets are segmented into regions, countries, states, and cities, each of which provides more precise information about the client, as well as the product name and specifications. More category data, such as Order Priority, Shipping Mode, Department Details, and so on, are available.
+<P> </FONT>
+<B><FONT SIZE = 3, COLOR = "#0E5802">
+Identifying the problem </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#583302">
+In which market can a company lower the cost of shipping things based on location, hence improving corporate performance and increasing sales? 
+<P> </FONT>
+<B><FONT SIZE = 3, COLOR = "#0E5802">
+Plan  </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#583302">
+We can run a boxplot analysis of all the areas based on their shipping costs from the entire data set, and those with high shipping costs can be separated from the rest of the dataset and worked on separately. As in, whatever product division/segment is creating such high shipping costs, then visualize it using a dot chart or pie chart and display it to the stakeholders so that improvements may be done in that area.
+<P> </FONT>
+
+<P>
+
+<P><BR>
+<FONT SIZE=4, COLOR="#75A91B">
+<B>ANALYSIS SECTION</B>
+</FONT>
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+First task </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+<B> Take 5 numerical variables and find out their basic descriptive stats. </B>
+<P> </FONT>
+
+```{r First Task}
+
+#Finding out basic desc statistics of the values. 
+pr_mean = mean(P6Data$Price)
+pr_sd = sd(P6Data$Price)
+pr_range = (max(P6Data$Price)- min(P6Data$Price))
+pr_median = median(P6Data$Price)
+table_pr = round(c(pr_mean, pr_sd, pr_range, pr_median), 2)
+matrix_pr = matrix(table_pr, nrow = 4, byrow = TRUE)
+
+dis_mean = mean(P6Data$Discount)
+dis_sd = sd(P6Data$Discount)
+dis_range = (max(P6Data$Discount)- min(P6Data$Discount))
+dis_median = median(P6Data$Discount)
+table_dis = round(c(dis_mean, dis_sd, dis_range, dis_median), 2)
+matrix_dis = matrix(table_dis, nrow = 4, byrow = TRUE)
+
+SC_mean = mean(P6Data$ShippingCost_Product)
+SC_sd = sd(P6Data$ShippingCost_Product)
+SC_range = (max(P6Data$ShippingCost_Product)- min(P6Data$ShippingCost_Product))
+SC_median = median(P6Data$ShippingCost_Product)
+table_SC = round(c(SC_mean, SC_sd, SC_range, SC_median), 2)
+matrix_SC = matrix(table_SC, nrow = 4, byrow = TRUE)
+
+ST_mean = mean(P6Data$Sales_Total)
+ST_sd = sd(P6Data$Sales_Total)
+ST_range = (max(P6Data$Sales_Total)- min(P6Data$Sales_Total))
+ST_median = median(P6Data$Sales_Total)
+table_ST = round(c(ST_mean, ST_sd, ST_range, ST_median), 2)
+matrix_ST = matrix(table_ST, nrow = 4, byrow = TRUE)
+
+NS_mean = mean(P6Data$Net_Sale)
+NS_sd = sd(P6Data$Net_Sale)
+NS_range = (max(P6Data$Net_Sale)- min(P6Data$Net_Sale))
+NS_median = median(P6Data$Net_Sale)
+table_NS = round(c(NS_mean, NS_sd, NS_range, NS_median), 2)
+matrix_NS = matrix(table_NS, nrow = 4, byrow = TRUE)
+
+#Joining all the matrix using cbind function and then naming the rows and cols.
+matrix_of_all = cbind(matrix_pr, matrix_dis, matrix_SC, matrix_ST, matrix_NS)
+
+row_of_all = c("Mean", "SD", "Range", "Median")
+rownames(matrix_of_all) = row_of_all
+col_of_all = c("Price", "Discount", "Shipping Cost", "Sales Total", "Net Sales")
+colnames(matrix_of_all) = col_of_all
+
+matrix_of_all %>%
+  kbl() %>%
+  kable_material_dark("hover")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the pricing table, we can observe that the mean is higher than the median, indicating that the price distribution is positively skewed. Aside from that, the price range is large when the mean and median values are around 550 and 500, respectively, indicating that there is a massive outlier in the data set that is significantly raising the range value. The discount table appears to be normal since the mean is almost equal to the median, implying that the distribution in the discount table is normal. The mean in the shipping cost table is less than the median, indicating that the distribution is negatively skewed. The sales total table resembles the pricing table in appearance. Because the mean is bigger than the median, the table is positively skewed, but the range is also large, implying that the sales total table will include massive outliers. The standard deviation is greater than the median, implying that the data set's remaining 50percentile has a wide spread. The Net sales table is quite similar to the price and total sales tables. The distribution graph is positively skewed because the mean is bigger than the median. The range is likewise wide, implying that the net sales table has a lot of outliers.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Second task Part One </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create a boxplot and histogram of any numerical value.  
+<P> </FONT>
+
+```{r Second Task Part One}
+
+par(mfrow=c(1,2), mai = c(0.6, 1.0, 0.4, 0.4))
+
+boxplot(P6Data$Price,
+        col = brewer.pal(8, "Set1"),
+        main = "Boxplot for Price",
+        las = 1)
+
+points(mean(P6Data$Price), 
+       pch = 16, 
+       col = "Green", 
+       lwd = 10)
+
+title(ylab = "Price", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+hist(P6Data$Price,
+     las = 1,
+     breaks = 50,
+     col = brewer.pal(8, "Set2"),
+     main = "Histogram of Price",
+     xlab = "",
+     ylab = "",
+     ylim = c(0,100))
+
+title(xlab = "Price", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Frequency", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+abline(v = mean(P6Data$Price),
+       col = "Red",
+       lwd = 2)
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+We can see from the boxplot that the mean point is above the median line, indicating that the distribution graph is positively skewed. In addition, the pricing table has far too many outliers, implying that the range between the greatest and least figure will be huge. Though the majority of the spread is identical in the boxplot, the data is more spread after the 75th percentile.
+<BR>
+We can see from the histogram that the majority of the price data set is below the mean line and in the 500 price range. These data sets have a frequency of close to 100. However, beyond the mean, the data set values begin to decline, with a few outliers around the 3500 mark.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Second task Part Two </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create a boxplot and histogram of any numerical value.  
+<P> </FONT>
+
+```{r Second Task Part Two}
+
+par(mfrow=c(1,2), mai = c(0.6, 1.0, 0.4, 0.4))
+
+boxplot(P6Data$Quantity,
+        col = brewer.pal(8, "Set2"),
+        main = "Boxplot for Discount",
+        las = 1)
+
+points(mean(P6Data$Quantity), 
+       pch = 16, 
+       col = "Green", 
+       lwd = 10)
+
+text(x = 1.1,
+     y = boxplot.stats(P6Data$Quantity)$out,
+     labels = round(boxplot.stats(P6Data$Quantity)$out,0),
+     cex = 0.6,
+     col ="#1B96A9")
+
+title(ylab = "Discount", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+hist(P6Data$Quantity,
+     las = 1,
+     breaks = 15,
+     col = brewer.pal(8, "Set2"),
+     main = "Histogram of Discount",
+     xlab = "",
+     ylab = "",
+     ylim = c(0,250),
+     labels = T,
+     border = "Red")
+
+title(xlab = "Discount", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Frequency", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+abline(v = mean(P6Data$Quantity),
+       col = "Red",
+       lwd = 2)
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+The mean point is above the median line in the boxplot, suggesting that the distribution graph is positively skewed. Furthermore, the discount table has a few outliers, but they aren't large, implying that the range isn't unusual. The spread of data from the 50th to the 75th percentile is bigger after the 50th percentile, but the spread is greatest after the 75th percentile.
+<BR>
+The majority of the discount data set is below the mean line, as seen by the histogram. For several of the data sets, the frequency exceeds 200, implying that the majority of the discounts occurred in the 4-6 discount range. The histogram has a few outliers, but they are not large, therefore the dataset's range will be normal.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Second task Part Three </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create a boxplot and histogram of any numerical value.  
+<P> </FONT>
+
+```{r Second Task Part Three}
+
+par(mfrow=c(1,2), mai = c(0.6, 1.0, 0.4, 0.4))
+
+boxplot(P6Data$Returns,
+        col = brewer.pal(8, "Set1"),
+        main = "Boxplot for Returns",
+        las = 1)
+
+points(mean(P6Data$Returns), 
+       pch = 16, 
+       col = "Green", 
+       lwd = 10)
+
+text(x = 1.1,
+     y = boxplot.stats(P6Data$Returns)$out,
+     labels = round(boxplot.stats(P6Data$Returns)$out,0),
+     cex = 0.6,
+     col ="#1B96A9")
+
+title(ylab = "Returns", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+hist(P6Data$Returns,
+     las = 1,
+     breaks = 6,
+     col = brewer.pal(8, "Set2"),
+     main = "Histogram of Returns",
+     xlab = "",
+     ylab = "",
+     ylim = c(0,700),
+     labels = T,
+     border = "Red")
+
+title(xlab = "Returns", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Frequency", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+abline(v = mean(P6Data$Returns),
+       col = "Red",
+       lwd = 2)
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+In the boxplot, the mean point is above the median line, indicating that the distribution graph is positively skewed. Furthermore, there is just one outlier in the return table, but it isn't a significant one, suggesting that the range isn't unusual. After the 75th percentile, the data spreads out the greatest.
+<BR>
+The histogram shows that the bulk of the return data set is below the mean line. One of these data sets has a frequency of over 650, which is enormous when compared to the next closest data set, which has a frequency of 206. The data set value begins to decline after the mean line.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Second task Part Four </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create a boxplot and histogram of any numerical value.  
+<P> </FONT>
+
+```{r Second Task Part Four}
+
+par(mfrow=c(1,2), mai = c(0.6, 1.0, 0.4, 0.4))
+
+boxplot(P6Data$Net_Sale,
+        col = brewer.pal(8, "Set1"),
+        main = "Boxplot for Net Sales",
+        las = 1)
+
+points(mean(P6Data$Net_Sale), 
+       pch = 16, 
+       col = "Green", 
+       lwd = 10)
+
+
+title(ylab = "Net Sales", line = 4, cex.lab = 1,  col.lab = "#A22929")
+
+hist(P6Data$Net_Sale,
+     las = 1,
+     breaks = 20,
+     col = brewer.pal(8, "Set3"),
+     main = "Histogram of Net Sales",
+     xlab = "",
+     ylab = "",
+     ylim = c(0,400),
+     labels = T,
+     border = "Red")
+
+title(xlab = "Net Sales", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Frequency", line = 3, cex.lab = 1,  col.lab = "#A22929")
+
+abline(v = mean(P6Data$Net_Sale),
+       col = "Red",
+       lwd = 2)
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+The mean point in the boxplot is above the median line, suggesting a positively skewed distribution graph. Furthermore, because the data set contains too many outliers, the range in the net sales table will be large. The spread is greatest after the 75th percentile, but we can also see that the spread below the 50th percentile is very compact, implying that the majority of the data set is fairly similar.
+<BR>
+The majority of the Net Sales data set is below the mean line, as shown by the histogram. One of these data sets has a frequency of over 345, which is extremely high when compared to the data set closest to it, which has a frequency of just 228. The histogram has many outliers, implying that the data set's range would be enormous. We can also see that the majority of the data set is compressed below the mean line, with values fewer than 2500.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Third task Part One </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create graphical representation using bar graph for categorical values of your choice.  
+<P> </FONT>
+
+```{r Third Task Part One}
+
+par(mai = c(0.6, 1.4, 0.4, 0.4))
+
+b = barplot(table(P6Data$ShipMode),
+        horiz = T,
+        col = brewer.pal(8, "Set3"),
+        las = 1,
+        xlim = c(0,600),
+        main = "Bar graph for Shipping Mode",
+        border = "Red",
+        legend.text = rownames(table(P6Data$ShipMode)),
+        args.legend = list(x = "bottomright"))
+
+text(table(P6Data$ShipMode), 
+     b, 
+     table(P6Data$ShipMode), 
+     cex = 1, 
+     pos = 4)
+
+title(xlab = "Frequency", line = 2, cex.lab = 1,  col.lab = "#FF0000")
+title(ylab = "Shipping Mode", line = 6, cex.lab = 1,  col.lab = "#80FF00")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+By looking at the bar graph, we can see that standard class has the greatest frequency of 551, which is massive, with Second Class coming in second at 204 and First Class coming in third at 181. Same Day has the lowest rate of 64, which makes sense because there are so few Same Day situations that a low rate appears reasonable. Aside from that, it's remarkable how close Second Class and First Class Shipping Mode are. The fact that the Standard Class is so high makes sense because the majority of shipments are sent by Standard Class.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Third task Part Two </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create graphical representation using bar graph for categorical values of your choice.   
+<P> </FONT>
+
+```{r Third Task Part Two}
+
+par(mai = c(0.6, 1.4, 0.4, 0.4))
+
+c = barplot(table(P6Data$OrderPriority),
+        horiz = T,
+        col = brewer.pal(8, "Set2"),
+        las = 1,
+        xlim = c(0,600),
+        main = "Barplot for OrderPriority",
+        border = "Red",
+        legend.text = rownames(table(P6Data$OrderPriority)),
+        args.legend = list(x = "bottomright"))
+
+text(table(P6Data$OrderPriority), 
+     c, 
+     table(P6Data$OrderPriority), 
+     cex = 1, 
+     pos = 4)
+
+title(xlab = "Frequency", line = 2, cex.lab = 1,  col.lab = "#FF0000")
+title(ylab = "Order Priority", line = 4, cex.lab = 1,  col.lab = "#80FF00")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the bar graph, we can see that Medium has the highest order priority of 508, which is massive, followed by High (342), Critical (105), and Low (45). It's not unexpected that the order priority for low orders is 45, because most items should be placed under either medium or high priority. However, the fact that the order priority of High is so much higher than critical and low priority is surprising. High order priority frequency is also quite significant, despite the fact that medium priority frequency is the highest.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Third task Part Three </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create graphical representation using pie chart for categorical values of your choice. 
+<P> </FONT>
+
+```{r Third Task Part Three}
+
+par(mai = c(0.4, 0.4, 0.4, 0.4))
+
+pie(table(P6Data$ShipMode),
+    radius = 0.9,
+    col = brewer.pal(8, "Set2"),
+    labels = table(P6Data$ShipMode),
+    main = "Piechart for Ship Mode")
+
+legend("bottomleft",
+       legend = rownames(table(P6Data$ShipMode)),
+       fill = brewer.pal(8, "Set2"),
+       border = "Black")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the pie chart, we can see that Standard Class covers more than 50% of the pie chart at 551, Second Class covers around 20% of the pie chart at 204, and Second Class covers roughly 15-20% of the pie chart at 181. Same-day delivery occupies the smallest portion of the pie chart, accounting for about 10% of the total area at 64. It's great to see that more than half of the shipping modes are conventional, but the fact that First Class and Second Class shipping types are so close is surprising.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Third task Part Four </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many function as you want create graphical representation using pie chart for categorical values of your choice. 
+<P> </FONT>
+
+```{r Third Task Part Four}
+
+par(mai = c(0.4, 0.4, 0.4, 0.4))
+
+pie(table(P6Data$OrderPriority),
+    radius = 0.9,
+    col = brewer.pal(8, "Set1"),
+    labels = table(P6Data$OrderPriority),
+    main = "Piechart for Order Priority")
+
+legend("bottomleft",
+       legend = rownames(table(P6Data$OrderPriority)),
+       fill = brewer.pal(8, "Set1"),
+       border = "Black")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the pie chart, we can see that Medium Order Priority covers 50% of the pie chart at 508, followed by High Priority, which is also large, covering roughly 35% of the pie chart at 342. Critical comes next, spanning around 10% of the pie chart at 105, followed by low, which covers roughly 5% of the pie chart at 45. It's amazing to see that roughly half of the orders are Medium, which is to be expected, but the amount of orders with a High priority is enormous, which is somewhat unexpected. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fourth task Part One </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many functions as you want create a graphical representation linking a categorical value with a numerical value of your choice. 
+<P> </FONT>
+
+```{r Task Four Part One}
+
+par(mai = c(0.8, 1.2, 0.4, 0.4))
+
+four_m = tapply(P6Data$Price, P6Data$Market, mean)
+
+ba = barplot(four_m,
+        horiz = T,
+        col = brewer.pal(8, "Set1"),
+        las = 1,
+        xlim = c(0,700),
+        border = "Red",
+        main = "Barplot for Mean of Price per Market")
+
+text(round(four_m,2),
+     ba,
+     round(four_m,2),
+     cex = 0.8,
+     pos = 4)
+
+title(xlab = "Mean Price", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Market", line = 4, cex.lab = 1,  col.lab = "#A22929")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the bar graph, we can see that Europe has the highest average market with a price of 622.22, followed by Asia Pacific with a price of 593.85, and LATAM with a price of 582.13. Africa comes in second with 545.73, followed by USCA at 312.89. The average pricing in Europe, Latin America, and Asia Pacific is very close, while USCA falls much behind. <BR>
+<B><FONT SIZE=3, COLOR="#137177">
+Reference: (Johnson D, 2021) for tapply() function. <BR>
+<B><FONT SIZE=3, COLOR="#EC11D6">
+Q) Which market has the highest and lowest value when we take the average of all the markets' prices? <BR>
+<B><FONT SIZE=3, COLOR="#1136EC">
+A) Among all the markets, the European Market has the highest average value of 622.22, while the USCA Market has the lowest average value of 312.89. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fourth task Part Two </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many functions as you want create a graphical representation linking a categorical value with a numerical value of your choice. 
+<P> </FONT>
+
+```{r Task Four Part Two}
+
+par(mai = c(0.8, 1.2, 0.4, 0.4))
+
+four_s = tapply(P6Data$ShippingCost_Product, P6Data$Division, sd)
+
+do = dotchart(four_s,
+         col = brewer.pal(20, "Set1"),
+         cex = 1.2,
+         xlim = c(0,20),
+         pch = 19,
+         main = "Dotchart for SD of Shipping Cost per Division")
+
+title(xlab = "SD Shipping Cost", line = 3, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Division", line = 5, cex.lab = 1,  col.lab = "#A22929")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+We can see from the dotchart that Binders has the biggest standard deviation from the average, followed by Papers. The lowest standard devation is for copiers, with machines coming in second. Chairs and bookcases have comparable standard deviations, and the same may be said for applications and accessories. Because the standard deviation of Binders is so high, we can assume that the data is more spread out, but the standard deviation of Copiers is so low, we may assume that the data is grouped around the mean. <BR>
+<B><FONT SIZE=3, COLOR="#137177">
+Reference: (Johnson D, 2021) for tapply() function. <BR>
+<B><FONT SIZE=3, COLOR="#EC11D6">
+Q) Based on their shipping costs, which three divisions have the greatest standard deviation? <BR>
+<B><FONT SIZE=3, COLOR="#1136EC">
+A) Among all the divisions, Binders have the highest standard deviation, followed by Paper, and finally Furnishing. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fourth task Part Three </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Using as many functions as you want create a graphical representation linking a categorical value with a numerical value of your choice. 
+<P> </FONT>
+
+```{r Task Four Part Three}
+
+four_sm = tapply(P6Data$Quantity, P6Data$Segment, sum)
+
+pie(four_sm,
+    radius = 0.9,
+    col = brewer.pal(8, "Set1"),
+    labels = four_sm,
+    main = "Piechart for Sum of Quanity per Segment ")
+
+legend("bottomleft",
+       legend = rownames(four_sm),
+       fill = brewer.pal(8, "Set1"),
+       border = "Black")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the piechart, we can see that the total customer sector covers over 50% of the piechart at 3694, followed by Corporate covering over 30% of the piechart with at 1889, and finally Home office covering roughly 15-20% of the piechart with at 1029. Despite the fact that the consumer section accounts for more than half of the piechart, the size of the home office is surprising. <BR>
+<B><FONT SIZE=3, COLOR="#137177">
+Reference: (Johnson D, 2021) for tapply() function. <BR>
+<B><FONT SIZE=3, COLOR="#EC11D6"> <BR>
+Q) Based on the sum of quantity, which segment has the lowest total value? <BR>
+<B><FONT SIZE=3, COLOR="#1136EC">
+A) Home Office has the lowest total value, 1029, based on the sum of quantity. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fifth Task </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Filter the data in a region of your choosing and then graphically display it using a graph of your choice.
+<P> </FONT>
+
+```{r Task Fifth}
+
+fil_reg = filter(P6Data, Region == "Oceania")
+fil_mean = tapply(fil_reg$Net_Sale, fil_reg$Department, mean)
+
+fil_mean %>%
+  kbl(col.names = "Average Net Sale") %>%
+  kable_material_dark(c("striped", "hover"))
+
+par(mai = c(0.8, 1.4, 0.4, 0.4))
+
+bm = barplot(fil_mean,
+        horiz = T,
+        col = brewer.pal(8, "Set1"),
+        las = 1,
+        border = "Red",
+        xlim = c(0,3500),
+        main = "Barplot for Average of Net Sales per Department",
+        cex.names = 0.6)
+
+text(round(fil_mean,2),
+     bm,
+     round(fil_mean,2),
+     cex = 0.8,
+     pos = 4)
+
+title(xlab = "Average Net Sales", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+title(ylab = "Department", line = 5, cex.lab = 1,  col.lab = "#A22929")
+
+```
+
+<B><FONT SIZE=3, COLOR="#731D1D">
+Looking at the table and barplot, we can see that the Furniture Department has the greatest average net sales at 3008.89, followed by Technology at 2684.35, and Office Supplies at 2525.1. Despite the fact that all of the departments' average net sales are so close, it's unexpected to see Furniture have the highest sales.
+<BR>
+<B><FONT SIZE=3, COLOR="#137177">
+Reference: (Johnson D, 2021) for tapply() function, (Tohh M, 2019) for filter() function <BR>
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Sixth Task </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+Open question on the data set
+<P> </FONT>
+
+```{r}
+#Concatenating the Order Priority column with the department column to represent them on barplot with respect to their Shipping Cost. 
+
+P6Data$DepartOrder = paste(P6Data$OrderPriority, P6Data$Department)
+
+par(mai = c(0.8, 1.6, 0.4, 0.4))
+
+boxplot(P6Data$ShippingCost_Product ~ P6Data$DepartOrder,
+        horizontal = T,
+        las = 1,
+        cex.axis = 0.6,
+        col = brewer.pal(8, "Set2"),
+        main = "Boxplot to Represent Department Order Priority on Ship Cost",
+        xlab = "",
+        ylab = "")
+
+title(ylab = "Department Order Priority", line = 7, cex.lab = 1,  col.lab = "#A22929")
+title(xlab = "Shipping Cost", line = 2, cex.lab = 1,  col.lab = "#4229A2")
+
+```
+
+<B><FONT SIZE=3, COLOR="#EC11D6"> 
+Q) Which departments with their order priority had the most outliers before their first quantile based on the Department's Order Priority Data set based on their Shipping Cost? <BR>
+<B><FONT SIZE=3, COLOR="#1136EC">
+A) When compared to the other departments' order priorities, the technology department with order priority medium, the furniture department with order priority medium, and the office supplies department with order priority critical had the most outliers. <BR>
+<B><FONT SIZE=3, COLOR="#137177">
+Reference: (Marsja E, 2021) for concatenating two numerical values into one <BR>
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Seventh Task </B>
+<BR> 
+<FONT SIZE = 3, COLOR = "#9150D1">
+<B> Follow up question on the open question data set from Sixth Task.</B>
+<P> </FONT>
+
+<B><FONT SIZE=3, COLOR="#EC11D6"> 
+Q) Based on the question posed in the sixth task concerning departments with the highest order priority based on their Shipping Cost that had the most outliers before their first quantile, how are their outliers doing after the 100th quantile in these specific departments? Also, list the departments that do not have any outliers, along with their order priority. <BR>
+<B><FONT SIZE=3, COLOR="#1136EC">
+A) Technology department with order priority medium and Furniture department with order priority medium have some outliers after the 100th quantile while Office supplies with order priority Critical have no outliers after the 100th quantile mark. The only departments with no outliers in the whole data set are the technology department with low order priority and the office supply department with low order priority.
+
+<P>
+
+<P><BR>
+<FONT SIZE=4, COLOR="#75A91B">
+<B>CONCLUSION</B>
+</FONT>
+
+<P>
+
+<FONT SIZE = 3, COLOR = "#583302">
+To highlight some of the key points, the pricing market and net sales had several outliers, whereas discount and returns were more evenly distributed. The most common delivery mode was standard class, and medium had the greatest order priority. When compared to other regions, the European market had the highest average price. When comparing all categories, the consumer sector purchased the most total items, and furnishings had the greatest net sales. 
+<BR>
+So, my recommendation is to focus on why so many items are rated as High Priority, and see if any modifications can be made to those specific products. Increasing their stock in hand, for example. Also, after the Standard Class Shipping style, a large number of items are sent by Second and First Class. We must understand as to why the First Class and Second Class shipping methods have such comparable quantities. Some items, for example, are only sent via first class mail, and if we look into why this is, we may be able to figure out why so many of these items are sent via first class mail and whether they can be sent via Second class or Standard Shipping to increase profit and sell products at a lower shipping cost, which will assist customer satisfaction.
+<BR>
+In conclusion, I gained a better understanding of the sales sector and how big data analysis is used in it. I also learnt about efficient methods to utilize functions that improve your graphical and tabular representation by changing the knitr kable library and utilizing functions like legend and point to offer your visualization more depth.
+
+<P>
+
+<P><BR>
+<FONT SIZE=4, COLOR="#75A91B">
+<B>BIBLIOGRAPHY</B>
+</FONT>
+
+<P>
+
+<FONT SIZE = 3, COLOR = "#583302">
+1) Efti, S. (2022, January 24). How to perform a sales analysis (step-by-step with methods & metrics). The Close Sales Blog. https://blog.close.com/sales-analysis/
+<BR>
+2) Silva, E. (2018, November 30). 4 reasons why you should use big data for sales prospecting. Big Data Made Simple. https://bigdata-madesimple.com/4-reasons-use-big-data-sales-prospecting/#:%7E:text=Intelligent%20marketing%20specialists%20have%20found,sales%20and%20increase%20conversion%20rates.&text=According%20to%20a%20Neolane%20survey,them%20achieve%20higher%20conversion%20rates.
+<BR>
+3) Johnson, D. (2021, December 25). apply(), lapply(), sapply(), tapply() Function in R with Examples. Guru99. https://www.guru99.com/r-apply-sapply-tapply.html#5
+<BR> 
+4) Toth, M. (2019, April 8). How to Filter in R: A Detailed Introduction to the dplyr Filter Function. R-Bloggers. https://www.r-bloggers.com/2019/04/how-to-filter-in-r-a-detailed-introduction-to-the-dplyr-filter-function/
+<BR>
+5) Marsja, E. (2021, November 24). How to Concatenate Two Columns (or More) in R – stringr, tidyr. Erik Marsja. https://www.marsja.se/how-to-concatenate-two-columns-or-more-in-r-stringr-tidyr/
+
+<P>
+
+<P><BR>
+<FONT SIZE=4, COLOR="#75A91B">
+<B>APPENDIX</B>
+</FONT>
+
+<BR> 
+<FONT SIZE = 3, COLOR = "#F22E55">
+RMD file included in the report - Sharma_FinalProject.Rmd

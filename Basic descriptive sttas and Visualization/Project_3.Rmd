@@ -1,0 +1,389 @@
+---
+title: ""
+output: html_document
+---
+
+<html>
+<head></head>
+<body>
+<BR>
+
+<BR>
+<P><BR>
+<FONT SIZE=3, COLOR="#8272E9">
+<B>INTRODUCTION</B>
+</FONT>
+
+<FONT SIZE=3, COLOR="Green">
+Descriptive statistics is used to organize data using graphs and numbers and this process is used to the understand a specific set of observations. We can use Bar Graphs, Histogram, Pie Charts, Line Graph, Frequency Table etc. to summarize our data here.  We can also describe the shape of the graph like if the data is symmetrical or is it skewed to the right/left. We can also describe our data using numbers like mean, median and mode. We can also describe it using range, standard deviation and variance. It can be used in surveys like a survey which collected details about 100 cars and we can represent them in a graphical manner using descriptive analysis or like take a sample data on people’s age with their movie preference and make a graphical representation of that. 
+<BR>
+We can use the same analytics in the fishing industry to gather data about fish concentration areas and specific fishing spots for different species of fish, and then use that data to assist the fishing industry by telling them when to gather fish to increase their yield and different fishing hotspots for specific fishes.
+<BR>
+We can R language to use this descriptive analysis and represent them in a form where normal people can understand them in the form of graphs etc. For instance, we can use it in the healthcare industry in to get information about pre-clinical trials or drug testing data etc. We can also use it in Ecommerce industry and find out data about customer’s preference in buying products etc. 
+
+
+<P>
+
+<P><BR>
+<FONT SIZE=3, COLOR="#8272E9">
+<B>ANALYSIS SECTION</B>
+</FONT>
+
+
+<P>
+
+
+```{r libraries, message=FALSE, warning=FALSE}
+
+# Here is a list of the libraries that were utilized in this project.
+
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(readxl)
+
+library(DT) 
+library(FSA)
+library(knitr)
+library(kableExtra)
+
+library(FSAdata)
+library(base) 
+library(fishdata)
+library(RColorBrewer)
+library(plyr)
+library(magrittr)
+
+# Data set used 
+inchBio_1 <- read_excel("DataSets/inchBio-1.xlsx")
+```
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+First task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Use code summary to present a summary of the data set
+<P>
+
+```{r Task 1}
+
+summary(inchBio_1)
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+The weight difference between the min and max values is extremely large, with the first quarter and mean values being far closer to the min value. Because the mean and median of length are so near, the figure will resemble a normal distribution. Because the mean is more than the median in weight, the figure will be positively skewed, whereas the mean is less than the median in fishID, the result will be negatively skewed. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Second Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+To give another summary of the bio data set, use the code tibble::glimpse
+<P>
+
+```{r Task 2}
+
+tibble::glimpse(inchBio_1)
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+There are 505 rows and 6 colums in this fishing table. 
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Third task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Create an object to address each query, then use inline R code to deliver your replies.
+
+<P>
+
+```{r Task 3}
+
+num_col = ncol(inchBio_1)
+num_row = nrow(inchBio_1)
+leng = mean(inchBio_1$length)
+leng
+weig = mean(inchBio_1$weight)
+weig
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+This table's average length and weight are very close to each other.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fourth Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Only the following factors should be chosen: species, length, and weight. To do this operation, utilize code select.
+Then, provide the data set's initial six and last six observations. Use one of the following table libraries to present it: library(DT) or library (knitr).
+<P>
+
+```{r Task 4}
+
+Weightselected = select(inchBio_1, weight)
+d1 = headtail(Weightselected, 6)
+d1 %>%
+  kbl() %>%
+  kable_material_dark()
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+There are fish weighing between 3 and 580. The disparity is enormous.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Fifth Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Create a table with the variable species on the rows and the frequencies, cumulative frequencies, percentages, and cumulative percentages in the columns.
+<P>
+
+```{r Task 5}
+
+table_species = table(inchBio_1$species)
+
+table_dataframe = as.data.frame(table_species)
+
+names(table_dataframe) = c("Species","Frequency")
+
+new_table = table_dataframe %>% 
+  mutate(CumFrequency = cumsum(table_dataframe$Frequency)) %>% 
+  mutate(Percentage = table_dataframe$Frequency / sum(table_dataframe$Frequency)*100) %>% 
+  mutate(CumPercentage = cumsum(Percentage))
+new_table
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+Bluegills account for 40% of all fish species in the data set, while Pumpkinseed only accounts for 2.5 percent. The percentage of Black Crappie, Iowa Darter, and Yellow Perch is also fewer than 10%. The second and third highest percentages are 19.8% and 17.8% for Bluntnose Minnow and Largemouth Bass, respectively.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Sixth Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Create and present four bar plots based on the previous table, one for each of the numerical variables in terms of species. - Species and their relative abundances - The total number of species and their cumulative frequencies - Species and their relative proportions - Species and their percentages in total
+<P>
+
+```{r Task 6}
+par(mfrow=c(2,2))
+
+barplot(new_table$Frequency,
+        col = "Blue",
+        xlab = "Frequency",
+        ylab = "Species",
+        ylim = c(0,250),
+                las = 1,
+                )
+    
+barplot(new_table$CumFrequency,
+        col = "Red",
+        xlab = "Cumulative Frequency",
+        ylab = "Species",
+        ylim = c(0,500),
+                las = 1,
+                )
+        
+barplot(new_table$Percentage,
+        col = "Yellow",
+        xlab = "Percentage",
+        ylab = "Species",
+        ylim = c(0,50),
+                las = 1,
+                )
+barplot(new_table$CumFrequency,
+        col = "Purple",
+        xlab = "Cumulative Percentage",
+        ylim = c(0,500),
+        ylab = "Species",
+                las = 1,
+                )
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+The frequency to species barplot and the percentage to species barplot are similar. Cumulative Frequency and Cumulative Percentage are the same.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Seventh Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+In a horizontal bar graph, show the frequencies of the variable Species.
+
+<P>
+
+```{r Task 7}
+
+par(mai=c(1, 1.4,1,1))
+t7plot = barplot(table(inchBio_1$species),
+                 horiz = T,
+                 las = 1,
+                 main = "Species Bar Plot",
+                 cex.names = 0.7,
+                 cex.axis = 0.8,
+                 xlim = c(0,250),
+                 col = brewer.pal(8, "Set1")
+                 )
+text(table(inchBio_1$species),
+     t7plot,
+     table(inchBio_1$species),
+     cex = 0.8,
+     pos = 4)
+
+title(xlab = "Frequency", line = 2, cex.lab = 1.2,  col.lab = "#FF0000")
+title(ylab = "Species", line = 6, cex.lab = 1.2,  col.lab = "#80FF00")
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+Pumpkinseed has the lowest frequency of all the other species, followed by Black Crappie. Bluegill had the highest frequency (208), followed by Bluntnose Minnow (100), and Largemouth Bass (90). Both the Yellow Perch and the Iowa Darter have a frequency of fewer than 50.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Eight Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Create a bar plot with a cumulative percentage.
+Use the frequencies table you prepared in task fifth to build a vertical bar plot, and add a line to show the cumulative frequencies.   
+<P>
+
+```{r Task 8}
+par(mai=c(1.6,1,0.4,1))
+t8plot = barplot(new_table$Frequency,
+        ylim = c(0,550),
+        col = brewer.pal(8, "Set1"),
+        axes = FALSE,
+        space=0.15, 
+        border=NA, 
+        cex.names=0.5, 
+        names.arg= new_table$Species, 
+        main = NA, 
+        las=1)
+
+axis(side = 2, at = c(0, 250), las = 1, col.axis = "#D930DF", col = "blue")
+axis(side = 4, at = c(0, new_table$CumFrequency), las = 1 , col.axis = "#0D847C", col = "blue")
+
+mtext("Counts", side = 2, line = 1, col = 4, cex = 1, font = 2, las = 1)
+mtext("Cumulative Frequencies", side = 4, line = 3, col = 4, cex = 1, font = 2)
+
+lines(t8plot, new_table$CumFrequency, type = "b", cex = , pch = , col= 4)
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+The bluegill has the largest count value of more than 500, which considerably increases the cumulative frequency, followed by the Bluntnose Minnow and Largemouth Bass. Pumpkin seed, followed by Black Crappie, has the lowest count.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Ninth Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Create a box plot to show the length of each of the eight species.
+You will select all of the graph's properties for this work, including colors, titles, limits, font size, and so on. Make use of your knowledge and creativity.  
+<P>
+
+```{r Task 9}
+
+par(mai=c(1.6,2,0.4,1))
+boxplot(inchBio_1$length ~ inchBio_1$species,
+        col = brewer.pal(8, "Set1"),
+        horizontal = T,
+        xlab = "Length",
+        ylab = "Species",
+        las = 1)
+
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+The Largemouth Bass has the largest body length of all the species. The smallest is the Iowa Darter, followed by the Bluntnose Minnow. Yellow Perch, Pumpkinseed, and Bluegill are also rather large fish.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Tenth task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+In a box plot, there is a Bluntnose Minnow and an Iowa Darter.
+Because of their small size in comparison to other species, the Bluntnose Minnow and Iowa Darter are difficult to notice.
+Use the filter function to select only these two species, then build a new box plot to compare them.
+<P>
+
+```{r Task 10}
+
+t10 = filter(inchBio_1, species == c("Bluntnose Minnow", "Iowa Darter"))
+par(mai=c(1.6,2,0.4,1))
+boxplot(t10$length ~ t10$species,
+        col = brewer.pal(8, "Set1"),
+        horizontal = T,
+        xlab = "Length",
+        ylab = "Species",
+        las = 1)
+
+```
+<B><FONT SIZE=3, COLOR="Green">
+
+The Bluntnose Minnow has a longer average length than the Iowa darter fish. Outliers exist in the Bluntnose Minnow, but not in the Iowa Darter. The greatest length of an Iowa Darter is roughly 60, which is within the Bluntnose Minnow's first quartile range.
+
+<B><FONT SIZE = 3, COLOR = "E6870A">
+Eleventh Task </B>
+<BR>
+<FONT SIZE = 3, COLOR = "#982855">
+Make a scatter plot for the Bluntnose Minnow and Iowa Darter species to show the relationship between length and weight.
+Colors, titles, limitations, font size, and other graph parameters will be selected for this project. Make the most of your skills and imagination.
+Make sure the data points for the two species are different colors and forms.
+After the plot code, call legend to display a legend inside your graph.
+<P>
+
+```{r Task 11}
+
+plot(t10$length, t10$weight,
+     xlab = "Length",
+     ylab = "Weight",
+     col = c("Red","Blue"),
+     pch = c(16,12)
+     )
+
+legend("topleft", 
+       legend = c("Bluntnose Minnow","Iowa Darter"),
+       col = 1:2,
+       pch = 12,16)
+
+abline(mean(t10$length, t10$weight),0, col="blue", lty = 2, lwd = 5)
+
+```
+
+<B><FONT SIZE=3, COLOR="Green">
+Despite the fact that the majority of the length to weight ratios are similar, both species have many outliers.
+
+<!--Title for Conclusions section-->
+<P><BR>
+<FONT SIZE = 4, COLOR = "#8272E9"><B>
+CONCLUSIONS
+</B></FONT>
+
+<P>
+Lastly, I gained a better knowledge of how the R language handles analysis in general. In addition, I learned more R codes and how to represent them in RMarkdown, as well as new libraries that improved the aesthetics of my report. Apart from that, I learned about new functions such as mtext() and legend(), which helped me analyze the entire dataset and create a more presentable report.
+<BR>
+So, after reviewing the report, my advice to the fishing business is to focus on largemouth bass, which not only have one of the highest length-to-weight ratios, but also outperform other species with similar frequency, such as the bluntnose minnow. Largemouth bass is the most profitable fish species, not only in terms of length but also in terms of weight.
+
+<!--Title for Bibliography section-->
+<P><BR>
+<FONT SIZE = 3, COLOR = "#8272E9"><B>
+BIBLIOGRAPHY
+</B></FONT>
+
+<P>
+https://www.intellspot.com/descriptive-statistics-examples/
+<BR>
+https://www.mckinsey.com/industries/agriculture/our-insights/precision-fisheries-navigating-a-sea-of-troubles-with-advanced-analytics <BR>
+https://www.researchconnections.org/research-tools/descriptive-statistics#:~:text=Descriptive%20statistics%20can%20be%20useful,highlight%20potential%20relationships%20between%20variables <BR>
+https://www.youtube.com/watch?v=Sn4dkeehUjo <BR>
+https://www.youtube.com/watch?v=mB3iSp9-OPc <BR>
+https://www.youtube.com/watch?v=FEAS3akVxD8 <BR>
+https://www.youtube.com/watch?v=yrVhA8GXvrc&t=245s <BR>
+https://www.youtube.com/watch?v=V3Co_UFLOI4 <BR>
+https://www.youtube.com/watch?v=U64yNvlhv9I&t=172s <BR>
+https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/mtext <BR>
+https://www.rapidtables.com/web/color/RGB_Color.html <BR>
+https://www.youtube.com/watch?v=7t8oW6cUrT0 <BR>
+https://www.youtube.com/watch?v=QJr4yBag_RU <BR>
+https://www.youtube.com/watch?v=Yorx7OmWHMU <BR>
+https://www.geeksforgeeks.org/how-to-color-scatter-plot-points-in-r/<BR>
+

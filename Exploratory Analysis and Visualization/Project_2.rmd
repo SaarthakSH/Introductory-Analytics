@@ -1,0 +1,435 @@
+---
+title: ""
+output: html_document
+---
+
+```{r libraries, message=FALSE, warning=FALSE}
+#Libraries 
+library(readxl)
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(RColorBrewer)
+
+#Data Sets used
+M2Project_Data <- read_excel("DataSets/M2Project_Data.xlsx")
+```
+
+
+<P><BR>
+<FONT SIZE = 8, COLOR = "652695">
+<CENTER>
+Introduction
+</CENTER>
+</B>
+<FONT SIZE = 5, COLOR = "264895">
+<P><BR>
+Descriptive statistics are used to organize data with the help of graphs and numbers and this process is used to understand a specific set of observations. We can use Bar Graphs, histograms, Pie Charts, etc. to summarize our data here.
+<BR>
+Inferential Statistics is used when we take our sample data and use it to make an inference/assumption to draw a conclusion on the whole population. We can use probability here to determine how confident we are that the conclusion we made is correct.
+<BR>
+Data Presentation is a powerful way to present data to people by making it easily understandable as well as readable at the same time. It can effectively present the largest amount of complex data in a simple manner. Some data presentation tools are histogram, box plot, pie chart, etc.
+<BR>
+R is an open-source language used mainly for statistical computing in top/big companies. It can be used for a variety of purposes like measuring central tendency, dispersion, or using probability to explore assumption-based analysis.
+
+<P><BR>
+<CENTER>
+<FONT SIZE = 8, COLOR = "872695">
+Analysis Section
+</CENTER>
+<P>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 1 
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Present the first 5 and the last 5 records from the dataset. 
+
+```{r Task 1}
+head(M2Project_Data, 5)
+tail(M2Project_Data, 5)
+t1 = rbind(head(M2Project_Data, 3), tail(M2Project_Data, 5))
+knitr::kable(t1)
+t1 %>%
+  kbl() %>%
+  kable_material_dark()
+```
+
+<B> Observation </B>: The shipping cost in the Oceania Region is way higher compared to other regions.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 2 
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Present a table with all categories of Market and their frequencies
+
+```{r Task 2}
+t2 = table(M2Project_Data$Market)
+t2_names = as.data.frame(t2)
+names(t2_names) = c("Market", "Frequencies")
+t2_names
+```
+
+<B> Observation </B>: The Asia Pacific market has the highest frequencies followed by Europe. 
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 3
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Present a bar graph with all categories of Market and their frequencies
+
+```{r Task 3}
+market_table = table(M2Project_Data$Market)
+
+b = barplot(market_table,
+        horiz = T,
+        las = 1,
+        col = brewer.pal(5, "Set3"),
+        xlab = "Sales",
+        ylab = "Market",
+        xlim = c(0,400))
+text(market_table, b, market_table, pos = 4)
+
+```
+
+<B> Observation </B>: Africa had the least amount of sales in the whole market.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 4
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Pie chart of product category frequencies in Africa.
+
+```{r Task 4}
+t4Africa = dplyr::filter(M2Project_Data, Market=="Africa")
+table_africa = table(t4Africa$Product_Category)
+pie(table_africa)
+
+```
+
+<B> Observation </B>: Technology has the highest frequency while furniture and office supplies are equally divided. 
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 5
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Reproduce codes given by instructor.
+
+```{r Task 5}
+
+t5bar = barplot(table(t4Africa$Product_SubCategory),
+                ylim = c(0,14),
+                las = 1)
+text(y = table(t4Africa$Product_SubCategory),
+     t5bar,
+     table(t4Africa$Product_SubCategory),
+     cex = 0.8,
+     pos = 3)
+```
+
+<B> Observation </B>: In product-subcategory Phone had the highest amount of sales.  
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 6
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Improve bar plot. 
+
+```{r Task 6}
+
+t5bar = barplot(table(t4Africa$Product_SubCategory),
+                ylim = c(0,14),
+                las = 1,
+                main = "Africa Product Sub Category Sales",
+                xlab = "Product Sub Category",
+                ylab = "Sales",
+                col = brewer.pal(8, "Set3"),
+                cex.names = 0.5)
+
+```
+
+<B> Observation </B>: Storage and Chairs had the lowest amount of sales. 
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 7
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Mean sales per subcategory in the African Market.
+
+```{r Task 7}
+
+mean_Africa = tapply(t4Africa$Sales, t4Africa$Product_SubCategory, mean)
+mean_Africa
+dotchart(mean_Africa)
+
+```
+
+<B> Observation </B>: The mean sales of Copiers were the highest. 
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 8
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Total sales per Region in the African Market.
+
+```{r Task 8}
+total_sales = (tapply(t4Africa$Sales, t4Africa$Region, sum))
+t8bar = barplot(total_sales,
+                col = brewer.pal(8, "Set3"),
+                ylim = c(0,300000),
+                ylas = 1,
+                cex.name = 0.7,
+                xlab = "Region",
+                ylab = "Sales"
+                )
+vec = c("205523.8 ","96575.4","178792.3","161749.4","116827.0")
+text(t5bar,
+     total_sales,
+     vec,
+     cex = 0.8,
+     pos = 3)
+
+```
+
+<B> Observation </B>: Eastern Africa had the lowest sales among all the other regions.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 9
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Mean shipping costs per Region in the African Market.
+
+```{r Task 9}
+
+mean_shipping = tapply(t4Africa$ShippingCost, t4Africa$Region, mean)
+mean_shipping
+
+t9bar = barplot(mean_shipping,
+                col = brewer.pal(8, "Set3"),
+                ylim = c(0,450),
+                ylas = 1,
+                cex.name = 0.7,
+                xlab = "Region",
+                ylab = "Shipping Cost"
+                )
+vec2 = c("205523.8 ","96575.4","178792.3","161749.4","116827.0")
+text(t9bar,
+     mean_shipping,
+     vec2,
+     cex = 0.8,
+     pos = 3)
+
+```
+
+<B> Observation </B>: Eastern Africa has the highest shipping cost in the whole Africa region.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 10
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+<B>Summary of tasks 3 to 8</B>
+ 
+The dataset was already provided to us by our instructor Dr. Dee Chiluiza and the objective of this report was already laid out. Also, the data was already cleaned so only interpretation of data and sharing the result were achieved during this report. 
+<BR> 
+During this report, I learned about how to access specific region data using the tapply() function from a list of multiple regions dataset. Not only that I learned how to play with that and made descriptive analysis on the resulted data. Other than that I learned about barplot, bargraphy, piechart, and dot chart.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 11
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+<B>Descriptions of: integer, factor, double, numeric</B>
+<BR>
+Numeric is the most common data type that is used in R. A variable/list/series will be stored in the data if the values are either numbers or decimals.
+<BR>
+An integer is a special case of numeric data. These are numbers without decimals. So, these are used to store only those numeric values which don’t contain decimals.
+<BR>
+Double is a floating-point vector in R and is used to store both the integer as well as decimal values. Double can also store special values like not a number, negative infinity, etc.
+<BR>
+The factor is a special case of character variables that also contains the text. However, factors are used where there is a limited number of unique character strings. For instance, in gender, you make a factor of male, female.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 12
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Duplicate codes presented by instructor.
+
+```{r Task 12}
+#Use par() code to organize graphs in a matrix of 2 rows and 1 column
+par(mfcol = c(2,1))
+
+# Present a boxplot of all profits
+boxplot(M2Project_Data$Profits,
+     horizontal = T,
+     col = brewer.pal(3, "Set3"),
+     main = "Boxplot for Profits",
+     xlab = "Profits"
+     )
+abline(v = mean(M2Project_Data$Profits),
+       col = "Red",
+       lwd = 3)
+
+# Present a histogram of all profits
+hist(M2Project_Data$Profits,
+     ylas = 1,
+     breaks = 50,
+     col = brewer.pal(15, "Set3"),
+     main = "Histogram for Profits",
+     xlab = "Profits"
+     )
+abline(v = mean(M2Project_Data$Profits),
+       col = "Red",
+       lwd = 3)
+
+```
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 13
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+<B>Observations.</B>
+<BR>
+By analyzing the box plot we can see that most of the profits made were around the mean/median mark but it has a lot of outliers usually around the 2000 price range. But in the histogram, most of the profit was made by the same products/sale.
+<BR>
+We can use the par() function to display multiple graphs in a single plot. We can use this function to compare multiple graphs by placing them in a row or in a column.
+<BR>
+We can use mfrow for rows and mfcol for columns.
+
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 14
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Profit in the Latin American market
+
+```{r Task 14}
+t14LATAM = filter(M2Project_Data, Market == "LATAM")
+LATAM_profit = t14LATAM$Profits
+
+hist(LATAM_profit,
+     breaks = 50,
+     col = brewer.pal(15, "Set3"),
+     main = "Histogram for LATAM Profits",
+     xlab = "Profits"
+     )
+
+boxplot(LATAM_profit,
+        horizontal = T,
+        col = brewer.pal(3, "Set3"),
+        main = "Boxplot for LATAM Profits",
+        xlab = "Profits")
+
+```
+
+<B> Observation </B>: By analyzing the LATAM histogram we can notice that majority of the profit happened between the 0-500 mark. But when we look at the box plot we can notice 25 percentile of the profits was around/less than zero.
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 15
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Table total sales per region in the Latin American market
+
+```{r Task 15}
+
+totalsales_LATAM = tapply(t14LATAM$Sales, t14LATAM$Region, sum)
+knitr::kable(totalsales_LATAM)
+```
+
+<B> Observation </B>: By analyzing the sales in LATAM we can see that Central America had the highest sales followed by South America and then the Caribbean. 
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 16
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Box plot for the profits per region in the Latin American market.
+
+```{r Task 16}
+
+boxplot(t14LATAM$Profits ~ t14LATAM$Region,
+        col = brewer.pal(3, "Set3"),
+        main = "Boxplot for LATAM Profits",
+        xlab = "Region",
+        ylab = "Profit",
+        ylas = 1
+        )
+
+
+```
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 17
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+<B> Observation </B>: After analyzing Task 15 and 16 we can notice that Central America had the highest amount of profit in the LATAM region while The Caribbean had the least. But, by noticing the box plot we can see that the 75th percentile of the Caribbean market had similar profit data to Central America and South America but after the Caribbean didn't have higher profits compared to its peers.  
+
+<P><BR>
+<B><FONT SIZE = 6, COLOR = "E6870A"></B>
+Task 18
+<BR>
+<FONT SIZE = 5, COLOR = "57AB1F">
+Free graph.
+
+```{r Task 18}
+free_graph = table(M2Project_Data$Quantity)
+free_graph
+boxplot(free_graph,
+        horizontal = T,
+        col = brewer.pal(3, "Set3"),
+        xlab = "Quantity",
+        main = "Box plot for quantity"
+        )
+     
+```
+
+<B> Observation </B>: I selected the quantity data from the given data set and used a box plot to analyze it. The average amount of quantity of products was around the 70 mark.
+
+<P><BR>
+<FONT SIZE = 8, COLOR = "C0433A">
+<CENTER>
+Conclusion
+</CENTER>
+</B>
+<FONT SIZE = 5, COLOR = "CD9E69">
+<P><BR>
+In conclusion, I got a better understanding of how analysis is done in R language as a whole. Also, I learned about HTML codes and how to represent them on RMarkdown and learned about various new libraries which helped my report look aesthetically more pleasing.
+<BR> 
+Other than that I got to know about new functions like tapply(), text(), par() which helped me in analyzing the whole dataset and making a more presentable report. Also, I learned a lot about bar plots, boxplots, and piecharts and how various functions are used to make changes in them like ylim, col, main, etc..
+<BR>
+So, after analyzing the report my recommendation would be to target the Asia Pacific market more as it gave the largest amount of sales compared to other Regions. Other than that, in Africa, more technologies should be pushed into the market as they had the highest amount of sales, especially phones which had the highest amount of sales in the technology department. Also, Copiers had the highest average amount of profit in the technology department so we should keep an eye on that as well. 
+<BR> 
+Central Africa had a substantial amount of sales compared to the African regions followed by North Africa. The same goes for Central America in the LATAM Market. It doubled its sales compared to its peer South American Market and quadrupled compared to the Caribbean Market. 
+
+<P><BR>
+<FONT SIZE = 8, COLOR = "C0433A">
+<CENTER>
+Bibliography
+</CENTER>
+</B>
+<FONT SIZE = 5, COLOR = "319526">
+<P><BR>
+1) https://www.datamentor.io/r-programming/subplot/# & https://www.youtube.com/watch?v=vP5pYHHwO5s - Par function <BR>
+2) https://statsandr.com/blog/data-types-in-r/ & https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/double - double, numeric, factor, integer <BR>
+3) https://statisticsglobe.com/add-mean-and-median-to-histogram-in-r - mean/median line in histogram <BR>
+4) https://www.analyticssteps.com/blogs/5-steps-data-analysis - data analysis steps <BR>
+5) https://www.rdocumentation.org/packages/graphics/versions/3.6.2/topics/text - text() <BR>
+6) https://rpubs.com/Dee_Chiluiza/home - Histogram/Boxplot/Dotchart <BR>
+7) https://www.rapidtables.com/web/color/RGB_Color.html - color reference <BR>
+8) https://www.journaldev.com/43918/rbind-function-r - rbind function <BR>
+9) https://www.youtube.com/watch?v=9ZWHfozPn6k&t=93s -tapply function <BR>
+10) https://stackoverflow.com/ - general r code 
